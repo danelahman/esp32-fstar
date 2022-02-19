@@ -1,0 +1,13 @@
+SOURCE_DIRS = .
+
+INCLUDE_DIRS = \
+  $(SOURCE_DIRS) \
+  $(FSTAR_HOME)/ulib/.cache \
+  $(KREMLIN_HOME)/kremlib
+
+
+FSTAR_INCLUDES = $(addprefix --include ,$(INCLUDE_DIRS))
+
+%.fst-in %.fsti-in:
+	@echo $(FSTAR_INCLUDES)
+

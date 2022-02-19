@@ -1,0 +1,12 @@
+idf_component_register(
+    SRCS
+        "GPIO_Constants.c"
+        "GPIO.c"
+        "ESP.c"
+        "Monotonic_VoidPointer_UInt32.c"
+        "Monotonic_VoidPointer_While.c"
+        "Main.c"
+        "kremlinit.c"
+        "esp_led_mode_switching.c"
+    INCLUDE_DIRS
+        ".")

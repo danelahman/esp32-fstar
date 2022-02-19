@@ -1,0 +1,9 @@
+obj/
+.depend
+.vscode/
+*.checked
+*.lax
+WasmSupport.*
+build/
+.DS_Store
+esp/sdkconfig
