@@ -160,13 +160,13 @@ layered_effect {
 
 unfold
 let lift_div_wp (a:Type) (wp:pure_wp a) : espst_wp a = 
-  FStar.Monotonic.Pure.wp_monotonic_pure (); 
+  FStar.Monotonic.Pure.elim_pure_wp_monotonicity wp;
   fun p h0 -> wp (fun x -> p x h0)
 
 inline_for_extraction
 let lift_div_espst (a:Type) (wp:pure_wp a) (c:eqtype_as_type unit -> DIV a wp)
   : espst_repr a (lift_div_wp a wp) = 
-  FStar.Monotonic.Pure.wp_monotonic_pure (); 
+  FStar.Monotonic.Pure.elim_pure_wp_monotonicity wp;
   fun _ -> c ()
 
 sub_effect DIV ~> ESPSTATE = lift_div_espst
