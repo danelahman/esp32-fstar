@@ -35,9 +35,9 @@ tested versions) as per the corresponding instructions, the only
 user-specific settings you should need to set are the `ESP_IDF` and
 `ESP_PORT` paths in the top-level `Makefile.include` file.
 
-Also, pay attention that both F\* and KaRaMeL's binaries are your
-path, and that the `FSTAR_HOME` and `KRML_HOME` are set and pointing
-to the corresponding directories.
+Also, pay attention that both F\* and KaRaMeL binaries are your path,
+and that the `FSTAR_HOME` and `KRML_HOME` environment variables are
+set and pointing to the F\* and KaRaMeL directories, respectively.
 
 ## Structure of the repository
 
