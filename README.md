@@ -24,7 +24,7 @@ you need the following software:
 
 * [Espressif IoT Development Framework](https://github.com/espressif/esp-idf)
 
-  Tested with version v4.3-dev-1901-g178b122c1
+  Tested with Github commit version 178b122c145c19e94ac896197a3a4a9d379cd618
 
 * [FTDI Drivers](https://learn.sparkfun.com/tutorials/how-to-install-ftdi-drivers)
 
