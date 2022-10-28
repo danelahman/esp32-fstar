@@ -1,15 +1,12 @@
 include Makefile.include
+include ../../Makefile.include
 
 KRML = $(KRML_HOME)/krml
 
 LIB_DIR = ../../lib
 SRC_DIR = src
 EXTRACT_DIR = dist
-
-ESP_IDF = $(HOME)/esp/esp-idf
 ESP_DIR = esp
-
-ESP_PORT = /dev/tty.usbserial-DN02LKQH
 
 .PHONY: all extract compile clean flash
 

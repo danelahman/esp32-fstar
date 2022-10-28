@@ -1,0 +1,7 @@
+# Change these paths according to your setup
+
+# Path of the ESP-IDF development framework
+ESP_IDF = $(HOME)/esp/esp-idf
+
+# Path of the ESP32 SoC USB device
+ESP_PORT = /dev/tty.usbserial-DN02LKQH
