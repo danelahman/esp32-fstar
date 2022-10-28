@@ -20,7 +20,7 @@ extract:
 	$(KRML) \
 	  -I ../$(LIB_DIR) \
 	  -tmpdir ../$(EXTRACT_DIR) \
-	  -warn-error @4@5@18+9 \
+	  -warn-error +2@4@5@18+9 \
 	  -fparentheses \
 	  -skip-compilation \
 	  -skip-makefiles \

@@ -26,10 +26,17 @@ open LowStar.BufferOps
   *
   * This way we ensure that one cannot deallocate the given argument/resource 
   * before any associated ISR handlers have been uninstalled.
-  *)
+  *
+  * Assumed via a `let` and `admit ()` as opposed to an `assume val` so as to
+  * avoid the `isr_map` name being extracted to `ESPST.h` header file.
+  *) 
 noextract
-assume 
-val isr_map:r:ref (erased (option (M.t gpio_num_t VP.t))){HS.frameOf r == HS.root}
+let isr_map_erased (_:unit) 
+  : Tot (r:ref (erased (option (M.t gpio_num_t VP.t))){HS.frameOf r == HS.root}) 
+  = admit ()
+
+noextract
+let isr_map = isr_map_erased ()
 
 (**
   * Various predicates concerning the ghost state, and the 
