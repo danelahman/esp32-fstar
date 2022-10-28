@@ -1,14 +1,14 @@
 # Examples of ESP32 applications written and verified in F\*, and extracted to C
 
-This repository contains examples of ESP32 microcontroller applications
-written and verified (for memory safety and functional correctness) in 
-the Low* subset of the F\* language, which are then extracted to low-level
-C code, and compiled and flashed to ESP32.
+This repository contains examples of ESP32 microcontroller
+applications written and verified (for memory safety and functional
+correctness) in the Low* subset of the F\* language, which are then
+extracted to low-level C code, and compiled and flashed to ESP32.
 
 ## Prerequisites
 
-To verify, extract, compile, and flash the examples in this repository, 
-you need the following software:
+To verify, extract, compile, and flash the examples in this
+repository, you need the following software:
 
 * [F\* language](https://github.com/FStarLang/FStar)
 
@@ -28,6 +28,17 @@ you need the following software:
 
 * [FTDI Drivers](https://learn.sparkfun.com/tutorials/how-to-install-ftdi-drivers)
 
+## User-specific settings
+
+If you have installed all the above-mentioned software (using the
+tested versions) as per the corresponding instructions, the only
+user-specific settings you should need to set are the `ESP_IDF` and
+`ESP_PORT` paths in the top-level `Makefile.include` file.
+
+Also, pay attention that both F\* and KaRaMeL's binaries are your
+path, and that the `FSTAR_HOME` and `KRML_HOME` are set and pointing
+to the corresponding directories.
+
 ## Structure of the repository
 
 This repository contains two top-level directories:
@@ -46,9 +57,11 @@ Each example application has the following general directory structure:
 
 * `esp/`: build directory for the esp-idf framework
 
-  * `esp/main/`: directory to where we copy all the C source code for compilation
+  * `esp/main/`: directory to where we copy all the C source code for
+    compilation
 
-    * `esp/main/CMakeLists.txt`: list of C source files for esp-idf to compile
+    * `esp/main/CMakeLists.txt`: list of C source files for esp-idf to
+      compile
 
   * `esp/CMakeLists.txt`: esp-idf project configuration
 
@@ -56,11 +69,13 @@ Each example application has the following general directory structure:
 
 * `src/`: F\* source code directory
 
-  * `src/c/`: manually written C code specific to each individual example application
+  * `src/c/`: manually written C code specific to each individual
+    example application
 
   * `src/Makefile`: makefile including the paths used by F\* Emacs mode
 
-* `Makefile`: project's top-level main makefile (includes targets `extract`, `compile`, `flash`, and `clean`)
+* `Makefile`: project's top-level main makefile (includes targets
+  `extract`, `compile`, `flash`, and `clean`)
 
 * `Makefile.include`: makefile including the paths used by F\* Emacs mode
 
