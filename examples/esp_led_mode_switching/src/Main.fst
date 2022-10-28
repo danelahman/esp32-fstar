@@ -33,6 +33,7 @@ let led_gpio = gpio_num_5
   * currently active blinking mode is allowed to evolve: once 
   * initialised with 0ul or 1ul, it can never go beyond these values.
   *)
+noextract
 let led_mode_rel : B.srel U32.t =
   fun i0 i1 ->
     ((FStar.Seq.length i0 = 1 /\ (FStar.Seq.index i0 0 = 0ul \/ FStar.Seq.index i0 0 = 1ul)) 
@@ -45,10 +46,12 @@ let led_mode_rel : B.srel U32.t =
   * of monotonic state then ensure that in any subsequent 
   * state evolution the pointer remains valued at 0ul or 1ul.
   *)
+noextract
 let led_mode_initialised_pred : B.spred U32.t =
   fun i ->  FStar.Seq.length i = 1 /\
          (FStar.Seq.index i 0 = 0ul \/ FStar.Seq.index i 0 = 1ul)
 
+noextract
 let led_mode_initialised (p:B.mpointer U32.t led_mode_rel led_mode_rel) : Type0 =
   B.witnessed p led_mode_initialised_pred
 
@@ -57,6 +60,7 @@ let led_mode_initialised (p:B.mpointer U32.t led_mode_rel led_mode_rel) : Type0 
   * status of the LED is allowed to evolve: once initialised
   * with value 0ul or 1ul, it can never go beyond these values.
   *)
+noextract
 let led_status_rel : B.srel U32.t =
   fun i0 i1 ->
     ((FStar.Seq.length i0 = 1 /\ (FStar.Seq.index i0 0 = 0ul \/ FStar.Seq.index i0 0 = 1ul)) 
@@ -69,10 +73,12 @@ let led_status_rel : B.srel U32.t =
   * of monotonic state then ensure that in any subsequent 
   * state evolution the pointer remains valued at 0ul or 1ul.
   *)
+noextract
 let led_status_initialised_pred : B.spred U32.t =
   fun i ->  FStar.Seq.length i = 1 /\
          (FStar.Seq.index i 0 = 0ul \/ FStar.Seq.index i 0 = 1ul)
 
+noextract
 let led_status_initialised (p:B.mpointer U32.t led_status_rel led_status_rel) : Type0 =
   B.witnessed p led_status_initialised_pred
 
@@ -84,6 +90,7 @@ let led_status_initialised (p:B.mpointer U32.t led_status_rel led_status_rel) : 
   * - the given void pointer is disjoint from the ghost state, and
   * - the given void pointer has once been initialised with 0 or 1.
   *)
+noextract
 let set_led_mode_pre (led_mode: VP.t) (h0: HS.mem) : GTot Type0 =
   led_mode `VP.is_upcast_of` led_mode_rel /\ 
   B.live h0 (VP.g_downcast led_mode_rel led_mode) /\
@@ -95,6 +102,7 @@ let set_led_mode_pre (led_mode: VP.t) (h0: HS.mem) : GTot Type0 =
   * - the `uint32_t` value of the given void pointer remains 0ul or 1ul, and
   * - the function only modifies the given void pointer.
   *)
+noextract
 let set_led_mode_post (led_mode: VP.t) (h0: HS.mem) (_: unit) (h1: HS.mem)
     : GTot Type0 =
   led_mode `VP.is_upcast_of` led_mode_rel /\
@@ -104,6 +112,7 @@ let set_led_mode_post (led_mode: VP.t) (h0: HS.mem) (_: unit) (h1: HS.mem)
   * Two auxiliary lemmas proving that after changing the void pointer 
   * in `set_led_mode`, it remains assigned the value 0ul or 1ul. 
   *)
+noextract
 let logand_add_lemma0 (x: U32.t)
     : Lemma (requires (x = 0ul))
       (ensures (U32.logand (x `U32.add` 1ul) 1ul = 1ul))
@@ -111,6 +120,7 @@ let logand_add_lemma0 (x: U32.t)
   assert (x `U32.add` 1ul = 1ul);
   assert (U32.logand 1ul 1ul = 1ul)
 
+noextract
 let logand_add_lemma1 (x: U32.t)
     : Lemma (requires (x = 1ul))
       (ensures (U32.logand (x `U32.add` 1ul) 1ul = 0ul))
@@ -152,6 +162,7 @@ let set_led_mode (led_status: VP.t)
   * - `led_status` is disjoint from the ghost state, and
   * - `led_status` has been witnessed to have been initialised.  
   *)
+noextract
 let main_task_pre (led_mode: VP.t) (led_status:VP.t) (h0: HS.mem) : GTot Type0 =
   B.live h0 gpio_intl_bufs /\
   (* `led_mode` properties *)
@@ -170,6 +181,7 @@ let main_task_pre (led_mode: VP.t) (led_status:VP.t) (h0: HS.mem) : GTot Type0 =
   * - the function only modifies only the GPIO-internals and `led_status`, and
   * - the function does not modify the ghost state.
   *)
+noextract
 let main_task_post (led_mode: VP.t) (led_status:VP.t) (h0: HS.mem) (_: unit) (h1: HS.mem) 
     : GTot Type0 =
   led_status `VP.is_upcast_of` led_status_rel /\
@@ -210,6 +222,7 @@ let main_task (led_mode: VP.t) (led_status:VP.t)
   * - the GPIO-internals are live, and
   * - that the ISR handler service has not been installed yet.
   *)
+noextract
 let app_main_pre (h0: HS.mem) : GTot Type0 = 
   B.live h0 gpio_intl_bufs /\ 
   ~(isr_installed h0)
@@ -219,6 +232,7 @@ let app_main_pre (h0: HS.mem) : GTot Type0 =
   * - the function only modifies GPIO-internals and the ghost
   *   state modelling arguments/resources to ISR handlers.
   *)
+noextract
 let app_main_post (h0: HS.mem) (_: unit) (h1: HS.mem) : GTot Type0 = 
   modifies_gpio_intls h0 h1
 

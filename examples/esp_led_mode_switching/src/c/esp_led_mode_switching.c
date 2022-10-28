@@ -1,7 +1,7 @@
-#include "kremlinit.h"
+#include "krmlinit.h"
 #include "Main.h"
 
 void app_main(void) {
-    kremlinit_globals();
+    krmlinit_globals();
     Main_app_main();
 }
