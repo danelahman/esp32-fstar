@@ -16,7 +16,7 @@ you need the following software:
 
 * [fstar-mode](https://github.com/FStarLang/fstar-mode.el)
 
-  Tested with Github commit version 3afbf04e4eb21af950cfdb727d8b808164fd9415
+  Tested with Github commit version 60489e75c6f26417068bf861b6db2935e72c38fe (version 20220725.2139)
 
 * [KreMLin F\* to C extraction tool](https://github.com/FStarLang/kremlin)
 
