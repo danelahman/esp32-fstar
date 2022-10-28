@@ -1,6 +1,6 @@
 include Makefile.include
 
-KRML = $(KREMLIN_HOME)/krml
+KRML = $(KRML_HOME)/krml
 
 LIB_DIR = ../../lib
 SRC_DIR = src
