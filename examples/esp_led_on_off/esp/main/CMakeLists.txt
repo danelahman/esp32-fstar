@@ -7,6 +7,6 @@ idf_component_register(
         "Monotonic_VoidPointer_While.c"
         "Main.c"
         "krmlinit.c"
-        "esp_blinking_led.c"
+        "esp_led_on_off.c"
     INCLUDE_DIRS
         ".")
