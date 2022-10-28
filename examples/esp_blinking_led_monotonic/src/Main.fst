@@ -131,6 +131,7 @@ let led_gpio = gpio_num_5
   * the invariant of the ISR handler for turning the LED on and off, 
   * which his that the pointer needs to remain valued 0ul or 1ul.
   *)
+noextract
 let led_status_rel : B.srel U32.t =
   fun i0 i1 ->
     (FStar.Seq.length i0 = 1 /\ (FStar.Seq.index i0 0 = 0ul \/ FStar.Seq.index i0 0 = 1ul) 
@@ -143,10 +144,12 @@ let led_status_rel : B.srel U32.t =
   * of monotonic state then ensure that in any subsequent 
   * state evolution the pointer remains valued at 0ul or 1ul.
   *)
+noextract
 let led_status_initialised_pred : B.spred U32.t =
   fun i ->  FStar.Seq.length i = 1 /\
          (FStar.Seq.index i 0 = 0ul \/ FStar.Seq.index i 0 = 1ul)
 
+noextract
 let led_status_initialised (p:B.mpointer U32.t led_status_rel led_status_rel) : Type0 =
   B.witnessed p led_status_initialised_pred
 
@@ -159,6 +162,7 @@ let led_status_initialised (p:B.mpointer U32.t led_status_rel led_status_rel) : 
   * - the given void pointer is disjoint from the ghost state, and
   * - the given void pointer has once been initialised with 0 or 1.
   *)
+noextract
 let set_led_status_pre (led_status: VP.t) (h0: HS.mem) : GTot Type0 =
   led_status `VP.is_upcast_of` led_status_rel /\ 
   B.live h0 (VP.g_downcast led_status_rel led_status) /\
@@ -170,6 +174,7 @@ let set_led_status_pre (led_status: VP.t) (h0: HS.mem) : GTot Type0 =
   * - the `uint32_t` value of the given void pointer remains 0ul or 1ul, and
   * - the function only modifies the given void pointer.
   *)
+noextract
 let set_led_status_post (led_status: VP.t) (h0: HS.mem) (_: unit) (h1: HS.mem)
     : GTot Type0 =
   led_status `VP.is_upcast_of` led_status_rel /\
@@ -179,6 +184,7 @@ let set_led_status_post (led_status: VP.t) (h0: HS.mem) (_: unit) (h1: HS.mem)
   * Two auxiliary lemmas proving that after changing the void pointer 
   * in `set_led_status`, it remains assigned the value 0ul or 1ul. 
   *)
+noextract
 let set_led_status_lemma0 (x: U32.t)
     : Lemma (requires (x = 0ul))
       (ensures (U32.logand (x `U32.add` 1ul) 1ul = 1ul))
@@ -186,6 +192,7 @@ let set_led_status_lemma0 (x: U32.t)
   assert (x `U32.add` 1ul = 1ul);
   assert (U32.logand 1ul 1ul = 1ul)
 
+noextract
 let set_led_status_lemma1 (x: U32.t)
     : Lemma (requires (x = 1ul))
       (ensures (U32.logand (x `U32.add` 1ul) 1ul = 0ul))
@@ -223,6 +230,7 @@ let set_led_status (led_status: VP.t)
   * - `led_status` is live, and
   * - `led_status` is disjoint from the ghost state.
   *)
+noextract
 let main_task_pre (led_status: VP.t) (h0: HS.mem) : GTot Type0 =
   B.live h0 gpio_intl_bufs /\
   led_status `VP.is_upcast_of` led_status_rel /\ 
@@ -234,6 +242,7 @@ let main_task_pre (led_status: VP.t) (h0: HS.mem) : GTot Type0 =
   * - the function only modifies only the GPIO-internals, and
   * - the function does not modify the ghost state.
   *)
+noextract
 let main_task_post (led_status: VP.t) (h0: HS.mem) (_: unit) (h1: HS.mem) 
     : GTot Type0 =
   modifies_gpio_intl_bufs h0 h1 /\ isr_unmodified h0 h1
@@ -262,6 +271,7 @@ let main_task (led_status: VP.t)
   * - the GPIO-internals are live, and
   * - that the ISR handler service has not been installed yet.
   *)
+noextract
 let app_main_pre (h0: HS.mem) : GTot Type0 = 
   B.live h0 gpio_intl_bufs /\ 
   ~(isr_installed h0)
@@ -271,6 +281,7 @@ let app_main_pre (h0: HS.mem) : GTot Type0 =
   * - the function only modifies GPIO-internals and the ghost
   *   state modelling arguments/resources to ISR handlers.
   *)
+noextract
 let app_main_post (h0: HS.mem) (_: unit) (h1: HS.mem) : GTot Type0 = 
   modifies_gpio_intls h0 h1
 

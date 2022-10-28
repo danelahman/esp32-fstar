@@ -20,6 +20,7 @@ let is_upcast_of p a = p `VP.is_upcast_of` (B.trivial_preorder a)
 let g_downcast #a p = VP.g_downcast (B.trivial_preorder a) p
 
 // when a void pointer is live in a given heap
+noextract
 let is_live_in p h = VP.is_live_in p h
 
 // abstract footprint of a void pointer

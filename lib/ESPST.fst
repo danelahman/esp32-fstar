@@ -27,46 +27,56 @@ open LowStar.BufferOps
   * This way we ensure that one cannot deallocate the given argument/resource 
   * before any associated ISR handlers have been uninstalled.
   *)
-assume
+noextract
+assume 
 val isr_map:r:ref (erased (option (M.t gpio_num_t VP.t))){HS.frameOf r == HS.root}
 
 (**
   * Various predicates concerning the ghost state, and the 
   * arguments/resources the ghost state maps GPIO pins to.
   *)
+noextract
 let isr_live_in (h: HS.mem) : GTot Type0 =
   h `HS.contains` isr_map /\
   (Some? (HS.sel h isr_map) ==>
    (let m = Some?.v (HS.sel h isr_map) in
      forall n. m `M.contains` n ==> VP.is_live_in (M.sel m n) h))
 
+noextract
 let isr_installed (h: HS.mem) : GTot Type0 = Some? (MHS.sel h isr_map)
 
+noextract
 let isr_empty (h: HS.mem) : GTot Type0 = 
   match reveal (MHS.sel h isr_map) with
   | None -> False
   | Some m ->  M.domain m == FStar.Set.empty
 
+noextract
 let isr_contains (h: HS.mem) (n: gpio_num_t) : GTot Type = 
   match reveal (MHS.sel h isr_map) with
   | None -> False
   | Some m -> m `M.contains` n
 
+noextract
 let isr_sel (h: HS.mem) (n: gpio_num_t{h `isr_contains` n}) : GTot VP.t =
   match reveal (MHS.sel h isr_map) with
   | Some m -> M.sel m n
-  
+
+noextract
 let isr_unmodified (h0 h1: HS.mem) : GTot Type0 = 
   MHS.sel h1 isr_map == MHS.sel h0 isr_map
 
+noextract
 let isr_updated_with (h0 h1: HS.mem) (n: gpio_num_t) (p: VP.t) : GTot Type0 =
   match reveal (MHS.sel h0 isr_map) with
   | None -> False
   | Some m -> MHS.sel h1 isr_map == hide (Some (M.upd m n p))
 
+noextract
 let isr_disjoint_from #a #rrel #rel (p: B.mpointer a rrel rel) : GTot Type0 =
   B.loc_disjoint (B.loc_addr_of_buffer p) (B.loc_mreference isr_map)
 
+noextract
 let isr_disjoint_from_resources #a #rrel #rel (h: HS.mem) (p: B.mpointer a rrel rel) : GTot Type0 =
   h `HS.contains` isr_map /\
   (Some? (HS.sel h isr_map) ==>
@@ -88,9 +98,11 @@ let isr_not_modified (h0 h1: HS.mem) : GTot Type0 =
   * running an ESPST-computation. Importantly, the value of the ghost state 
   * can change during an ESPST-computation, e.g., when installing an ISR handler.
   *)
+noextract
 let wp_monotonic #a (wp:st_wp a) : Type0 =
   forall p1 p2 h0. (forall x h1. p1 x h1 ==> p2 x h1) ==> wp p1 h0 ==> wp p2 h0
 
+noextract
 type espst_wp a = wp:(st_wp a){wp_monotonic wp}
 
 let espst_repr (a:Type) (wp:espst_wp a) =

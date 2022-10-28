@@ -12,7 +12,7 @@ you need the following software:
 
 * [F\* language](https://github.com/FStarLang/FStar)
 
-  Tested with Github commit version a21ad970d2d2aad8d6b2c455cab97b8f71c18285
+  Tested with Github commit version 9086005cb5129dc6d5667214586f2df902bddddd (tag v2022.07.13)
 
 * [fstar-mode](https://github.com/FStarLang/fstar-mode.el)
 
@@ -20,11 +20,11 @@ you need the following software:
 
 * [KreMLin F\* to C extraction tool](https://github.com/FStarLang/kremlin)
 
-  Tested with Github commit version c113d20b84a55dd1ba60c86c1502f2c49459b645
+  Tested with Github commit version ad5e933bb66fa8f3a09aa424c6f6cbb4ef4c8775 (Oct 25 2022)
 
 * [Espressif IoT Development Framework](https://github.com/espressif/esp-idf)
 
-  Tested with Github commit version 178b122c145c19e94ac896197a3a4a9d379cd618
+  Tested with Github commit version 2d9e75bf0515ac3f09723cfba471ba363d030637 (Oct 28 2022)
 
 * [FTDI Drivers](https://learn.sparkfun.com/tutorials/how-to-install-ftdi-drivers)
 

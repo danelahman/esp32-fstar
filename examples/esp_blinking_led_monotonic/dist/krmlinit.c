@@ -5,18 +5,19 @@
   KaRaMeL version: ad5e933b
  */
 
-#ifndef __ESPST_H
-#define __ESPST_H
+#include "krmlinit.h"
 
 
 
 
-#include "ESP_Macros.h"
-#include "ESP_Types.h"
-#include "GPIO_Types.h"
-#include "Monotonic_VoidPointer.h"
-extern void *ESPST_isr_map;
-
-
-#define __ESPST_H_DEFINED
+#if defined(__GNUC__) && !(defined(_WIN32) || defined(_WIN64))
+__attribute__ ((visibility ("hidden")))
 #endif
+
+
+void krmlinit_globals()
+{
+  Main_button_gpio = GPIO_Constants_gpio_num_0;
+  Main_led_gpio = GPIO_Constants_gpio_num_5;
+}
+

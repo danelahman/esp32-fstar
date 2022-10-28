@@ -5,8 +5,8 @@
   KaRaMeL version: ad5e933b
  */
 
-#ifndef __GPIO_Constants_H
-#define __GPIO_Constants_H
+#ifndef __Monotonic_VoidPointer_H
+#define __Monotonic_VoidPointer_H
 
 
 
@@ -15,20 +15,8 @@
 #include "ESP_Types.h"
 #include "GPIO_Types.h"
 #include "Monotonic_VoidPointer.h"
-extern GPIO_Constants_gpio_loc_t *GPIO_Constants_gpio_intl_bufs;
-
-extern GPIO_Constants_gpio_num_t GPIO_Constants_gpio_num_0;
-
-extern GPIO_Constants_gpio_num_t GPIO_Constants_gpio_num_5;
-
-extern GPIO_Constants_gpio_mode_t GPIO_Constants_gpio_mode_input;
-
-extern GPIO_Constants_gpio_mode_t GPIO_Constants_gpio_mode_output;
-
-extern GPIO_Constants_esp_intr_flag_t GPIO_Constants_esp_intr_flag_lowmed;
-
-extern GPIO_Constants_esp_intr_type_t GPIO_Constants_gpio_intr_posedge;
+typedef void *Monotonic_VoidPointer_is_live_in;
 
 
-#define __GPIO_Constants_H_DEFINED
+#define __Monotonic_VoidPointer_H_DEFINED
 #endif
