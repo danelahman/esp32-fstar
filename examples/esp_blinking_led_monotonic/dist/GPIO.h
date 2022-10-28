@@ -15,12 +15,6 @@
 #include "ESP_Types.h"
 #include "GPIO_Types.h"
 #include "Monotonic_VoidPointer.h"
-typedef GPIO_modifies_gpio_intl_bufs GPIO_modifies_gpio_intl_bufs_plus;
-
-typedef GPIO_modifies_gpio_intl_bufs GPIO_modifies_gpio_intls;
-
-typedef GPIO_modifies_gpio_intl_bufs GPIO_modifies_gpio_intls_plus;
-
 extern GPIO_Constants_esp_err_t
 GPIO_gpio_set_level(GPIO_Constants_gpio_num_t gpio_num, uint32_t level);
 

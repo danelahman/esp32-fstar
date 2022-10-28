@@ -18,6 +18,7 @@ val is_upcast_of (p: t) (#a: Type0) (rel:B.srel a) : GTot prop
 val g_downcast (#a: Type0) (rel:B.srel a) (p: t{p `is_upcast_of` rel}) : GTot (B.mpointer a rel rel)
 
 // when a void pointer is live in a given heap
+noextract
 let is_live_in (p: t) (h: HS.mem) : GTot Type0 = exists a (rel:B.srel a). p `is_upcast_of` rel /\ B.live h (g_downcast rel p)
 
 // abstract footprint of a void pointer

@@ -25,18 +25,23 @@ module M = FStar.Map
 (**
   * Predicates concerning the buffer space modelling GPIO-internal variables.
   *)
+noextract
 let disjoint_from_gpio_intl_bufs #a #rel (p: B.mpointer a rel rel) : GTot Type0 = 
   B.disjoint gpio_intl_bufs p
 
+noextract
 let modifies_gpio_intl_bufs (h0 h1: HS.mem) : GTot Type0 =
   B.modifies (B.loc_buffer gpio_intl_bufs) h0 h1
 
+noextract
 let modifies_gpio_intl_bufs_plus (h0 h1: HS.mem) (l: B.loc) : GTot Type0 =
   B.modifies (B.loc_union (B.loc_buffer gpio_intl_bufs) l) h0 h1
 
+noextract
 let modifies_gpio_intls (h0 h1: HS.mem) : GTot Type0 =
   B.modifies (B.loc_union (B.loc_buffer gpio_intl_bufs) (B.loc_mreference isr_map)) h0 h1
 
+noextract
 let modifies_gpio_intls_plus (h0 h1: HS.mem) (l:B.loc) : GTot Type0 =
   B.modifies (B.loc_union (B.loc_union (B.loc_buffer gpio_intl_bufs) (B.loc_mreference isr_map)) l) h0 h1
 
