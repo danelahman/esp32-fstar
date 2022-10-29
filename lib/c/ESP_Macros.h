@@ -1,7 +1,7 @@
 #ifndef __ESP_Macros_H
 #define __ESP_Macros_H
 
-/* TODO: Switch over to using Kremlin macros proper. */
+/* TODO: Switch over to using KaRaMeL macros proper. */
 
 #ifndef KRML_HOST_MALLOC
 #  define KRML_HOST_MALLOC malloc

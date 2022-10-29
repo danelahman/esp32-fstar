@@ -1,14 +1,27 @@
 # Examples of ESP32 applications written and verified in F\*, and extracted to C
 
-This repository contains examples of ESP32 microcontroller
-applications written and verified (for memory safety and functional
-correctness) in the Low* subset of the F\* language, which are then
-extracted to low-level C code, and compiled and flashed to ESP32.
+This repository contains examples of simple [ESP32
+SoC](https://www.espressif.com/en/products/socs/esp32) applications
+written and verified (currently, for memory safety and functional
+correctness) in the [Low*](http://dx.doi.org/10.1145/3110261) subset
+of the dependently typed language [F\*](http://fstar-lang.org), and
+then extracted to C code, and compiled and flashed to ESP32.
+
+The purpose of these examples is to demonstrate how one can use the
+F\* language to *incrementally* develop, specify, verify, extract, and
+compile low-level embedded code. In particular, we are only importing
+(via specifying corresponding F\* interfaces) those parts of the ESP32
+development framework that are needed for writing specific examples.
+
+**Note:** These examples are programmed against the [SparkFun ESP32
+Thing](https://www.sparkfun.com/products/13907) development board, and
+its pin layout for buttons and LEDs. For other ESP32 boards, you need 
+to change which concrete pins are used for specific buttons, LEDs, etc.
 
 ## Prerequisites
 
 To verify, extract, compile, and flash the examples in this
-repository, you need the following software:
+repository, you need to install the following software:
 
 * [F\* language](https://github.com/FStarLang/FStar)
 
@@ -18,7 +31,7 @@ repository, you need the following software:
 
   Tested with Github commit version 60489e75c6f26417068bf861b6db2935e72c38fe (version 20220725.2139)
 
-* [KreMLin F\* to C extraction tool](https://github.com/FStarLang/kremlin)
+* [KaRaMeL F\* to C extraction tool](https://github.com/FStarLang/karamel)
 
   Tested with Github commit version ad5e933bb66fa8f3a09aa424c6f6cbb4ef4c8775 (Oct 25 2022)
 
@@ -30,7 +43,7 @@ repository, you need the following software:
 
 ## User-specific settings
 
-If you have installed all the above-mentioned software (using the
+Once you have installed all the above-mentioned software (using the
 tested versions) as per the corresponding instructions, the only
 user-specific settings you should need to set are the `ESP_IDF` and
 `ESP_PORT` paths in the top-level `Makefile.include` file.
