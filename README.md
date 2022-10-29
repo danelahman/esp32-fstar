@@ -15,8 +15,8 @@ development framework that are needed for writing specific examples.
 
 **Note:** These examples are programmed against the [SparkFun ESP32
 Thing](https://www.sparkfun.com/products/13907) development board, and
-its pin layout for buttons and LEDs. For other ESP32 boards, you need 
-to change which concrete pins are used for specific buttons, LEDs, etc.
+its pin layout for buttons and LEDs. For other ESP32 boards, you might
+need to change which pins are used for specific buttons, LEDs, etc.
 
 ## Prerequisites
 
