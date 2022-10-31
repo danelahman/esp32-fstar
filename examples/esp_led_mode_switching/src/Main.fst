@@ -1,8 +1,8 @@
 (**
   * An example F*/Low* application that switches between two LED
   * blinking modes (slower and faster) on an ESP32 board by 
-  * installing an interrupt handler that reacts and changes the 
-  * blinking ode when a button is pushed.
+  * installing an interrupt handler that reacts and changes the
+  * blinking mode when a button is pushed.
   *
   *)
 
@@ -30,7 +30,7 @@ let led_gpio = gpio_num_5
 
 (**
   * A preorder that governs how the pointer we use to track the 
-  * currently active blinking mode is allowed to evolve: once 
+  * currently active blinking mode is allowed to evolve: once
   * initialised with 0ul or 1ul, it can never go beyond these values.
   *)
 noextract
@@ -206,7 +206,8 @@ let main_task_espst (led_mode: VP.t) (led_status:VP.t)
   recall_p led_mode led_mode_initialised_pred;
   recall_p led_status led_status_initialised_pred;
   
-  let delay = ((100ul `U32.add` ((1ul `U32.sub` !*led_mode) `U32.mul` 400ul)) `U32.div` ESP.portTICK_PERIOD_MS) in
+  let delay = ((100ul `U32.add` ((1ul `U32.sub` !*led_mode) `U32.mul` 400ul)) 
+                `U32.div` ESP.portTICK_PERIOD_MS) in
   led_status *= U32.logand (!*led_status `U32.add` 1ul) 1ul;
   let _ = gpio_set_level led_gpio !*led_status in
   
@@ -274,28 +275,6 @@ let app_main_espst (_: unit)
 
   let led_status = mmalloc #U32.t #led_status_rel HS.root 0ul in
   witness_p led_status led_status_initialised_pred;
-
-  (*
-  // Manually checking that the (non-trivial) precondition of 
-  // `while_true2` is satisfied, because checking that the call
-  // to `while_true2` (with a proper non-trivial specification)
-  // produces a weird unification error in this example.
-  let h0 = get () in
-  let led_mode' = (VPU32.upcast led_mode_rel led_mode) in
-  let led_status' = (VPU32.upcast led_status_rel led_status) in
-  assert (
-  B.live h0 gpio_intl_bufs /\
-  (* `led_mode` properties *)
-  led_mode' `VP.is_upcast_of` led_mode_rel /\ 
-  B.live h0 (VP.g_downcast led_mode_rel led_mode') /\
-  isr_disjoint_from (VP.g_downcast led_mode_rel led_mode')/\
-  led_mode_initialised (VP.g_downcast led_mode_rel led_mode') /\
-  (* `led_status` properties *)
-  led_status' `VP.is_upcast_of` led_status_rel /\ 
-  B.live h0 (VP.g_downcast led_status_rel led_status') /\
-  isr_disjoint_from (VP.g_downcast led_status_rel led_status') /\
-  led_status_initialised (VP.g_downcast led_status_rel led_status'));
-  *)
 
   // while loop
   VPW.while_true2 

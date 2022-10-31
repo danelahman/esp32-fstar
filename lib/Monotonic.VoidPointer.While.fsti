@@ -40,7 +40,7 @@ val while_true
       (ensures (fun h0 x h1 -> False))
 
 (**
-  * Two-argument variant of the previous while-true function.
+  * Two-argument variant of the while-true function.
   *)
 val while_true2
       (#pre: erased (VP.t -> VP.t -> HS.mem -> Type0))
@@ -51,19 +51,9 @@ val while_true2
     : ESPST unit
       (requires
         (fun h0 ->
-            True // NOTE: Temporarily trivialising the type of `while_true2` due to a weird unification issue in F* when
-              //       calling `while_true2` in the `esp_led_mode_switching` example. At the same time, that example
-              //       validates the non-trivial and proper precondition of `while_true2`. Need investigate further.
-            ))
-      (ensures (fun h0 x h1 -> False))
-
-(*
-      (requires
-        (fun h0 ->
             reveal pre args1 args2 h0 /\
             (forall h1 h2. reveal pre args1 args2 h1 /\ reveal post args1 args2 h1 () h2 ==> reveal pre args1 args2 h2) /\
             (forall h0 h1 h2.
                 reveal post args1 args2 h0 () h1 /\ reveal post args1 args2 h1 () h2 ==> reveal post args1 args2 h0 () h2
             )))
       (ensures (fun h0 x h1 -> False))
-*)
