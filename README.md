@@ -26,6 +26,10 @@ repository, you need to install the following software:
 * [F\* language](https://github.com/FStarLang/FStar)
 
   Tested with Github commit version 9086005cb5129dc6d5667214586f2df902bddddd (tag v2022.07.13)
+  
+  *Note:* For building F\* v2022.07.13, the `opam` package `ppxlib`
+  package cannot be newer than version 0.25.1, see also [this
+  issue](https://github.com/FStarLang/FStar/issues/2681).
 
 * Emacs and [fstar-mode](https://github.com/FStarLang/fstar-mode.el)
 
