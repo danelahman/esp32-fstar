@@ -27,19 +27,21 @@ repository, you need to install the following software:
 
   Tested with Github commit version 9086005cb5129dc6d5667214586f2df902bddddd (tag v2022.07.13)
 
-* [fstar-mode](https://github.com/FStarLang/fstar-mode.el)
+* Emacs and [fstar-mode](https://github.com/FStarLang/fstar-mode.el)
 
   Tested with Github commit version 60489e75c6f26417068bf861b6db2935e72c38fe (version 20220725.2139)
 
 * [KaRaMeL F\* to C extraction tool](https://github.com/FStarLang/karamel)
 
-  Tested with Github commit version ad5e933bb66fa8f3a09aa424c6f6cbb4ef4c8775 (Oct 25 2022)
+  Tested with Github commit version 6dd219f468907553b65cda0cdb094eae849cf773 (Nov 2 2022)
 
 * [Espressif IoT Development Framework](https://github.com/espressif/esp-idf)
 
-  Tested with Github commit version 2d9e75bf0515ac3f09723cfba471ba363d030637 (Oct 28 2022)
+  Tested with Github commit version 63091bdf8d118f0e0c4e4424ee7a90f3d58ac6e5 (tag v4.3.4)
 
 * [FTDI Drivers](https://learn.sparkfun.com/tutorials/how-to-install-ftdi-drivers)
+
+  Tested with v1.5.0 for Mac OS X10.15 and macOS 11/12.
 
 ## User-specific settings
 
