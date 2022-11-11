@@ -75,7 +75,7 @@ val gpio_install_isr_service (intr_flags: esp_intr_flag_t)
 val gpio_uninstall_isr_service (_: unit)
     : ESPST unit
       (requires (fun h0 -> B.live h0 gpio_intl_bufs /\ isr_installed h0))
-      (ensures (fun h0 r h1 -> modifies_gpio_intls h0 h1 /\ ~(isr_installed h0)))
+      (ensures (fun h0 r h1 -> modifies_gpio_intls h0 h1 /\ ~(isr_installed h1)))
 
 val gpio_set_intr_type (gpio_num: gpio_num_t) (intr_type: esp_intr_type_t)
     : ESPST esp_err_t
