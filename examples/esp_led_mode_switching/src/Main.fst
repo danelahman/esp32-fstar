@@ -81,6 +81,7 @@ noextract
 let led_status_initialised (p:B.mpointer U32.t led_status_rel led_status_rel) : Type0 =
   B.witnessed p led_status_initialised_pred
 
+
 (**
   * The precondition of `set_led_mode`, it requires that:
   * - the given void pointer is an upcast of an `uint32_t` pointer 
@@ -146,6 +147,7 @@ let set_led_mode (led_status: VP.t)
     : ESPST_Extract unit (requires (set_led_mode_pre led_status))
                          (ensures (set_led_mode_post led_status)) =
   extract_st (fun _ -> set_led_mode_espst led_status)
+
 
 (**
   * The precondition of `main_task`, it requires that:
@@ -214,6 +216,7 @@ let main_task (led_mode: VP.t) (led_status:VP.t)
     : ESPST_Extract unit (requires (main_task_pre led_mode led_status)) 
                          (ensures (main_task_post led_mode led_status)) =
   extract_st (fun _ -> main_task_espst led_mode led_status)
+
 
 (** 
   * The precondition of `app_main`, it requires that:
@@ -290,7 +293,6 @@ let app_main_espst (_: unit)
   // in this case). This can be done by running the function given below:
   //
   // gpio_uninstall_isr_service ()
-
 
 
 (**

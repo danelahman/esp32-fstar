@@ -187,16 +187,16 @@ let set_led_status_post (led_status: VP.t) (h0: HS.mem) (_: unit) (h1: HS.mem)
 noextract
 let set_led_status_lemma0 (x: U32.t)
     : Lemma (requires (x = 0ul))
-      (ensures (U32.logand (x `U32.add` 1ul) 1ul = 1ul))
-      [SMTPat (U32.logand (x `U32.add` 1ul) 1ul)] =
+            (ensures (U32.logand (x `U32.add` 1ul) 1ul = 1ul))
+            [SMTPat (U32.logand (x `U32.add` 1ul) 1ul)] =
   assert (x `U32.add` 1ul = 1ul);
   assert (U32.logand 1ul 1ul = 1ul)
 
 noextract
 let set_led_status_lemma1 (x: U32.t)
     : Lemma (requires (x = 1ul))
-      (ensures (U32.logand (x `U32.add` 1ul) 1ul = 0ul))
-      [SMTPat (U32.logand (x `U32.add` 1ul) 1ul)] =
+            (ensures (U32.logand (x `U32.add` 1ul) 1ul = 0ul))
+            [SMTPat (U32.logand (x `U32.add` 1ul) 1ul)] =
   assert (x `U32.add` 1ul = 2ul);
   assert (U32.logand 2ul 1ul = 0ul)
 
@@ -208,18 +208,16 @@ let set_led_status_lemma1 (x: U32.t)
 noextract
 inline_for_extraction
 let set_led_status_espst (led_status: VP.t)
-    : ESPST unit
-      (requires (set_led_status_pre led_status))
-      (ensures (set_led_status_post led_status)) =
+    : ESPST unit (requires (set_led_status_pre led_status))
+                 (ensures (set_led_status_post led_status)) =
   recall isr_map;
   let led = VPU32.downcast led_status_rel led_status in
   recall_p led led_status_initialised_pred;
   led *= U32.logand (!*led `U32.add` 1ul) 1ul
 
 let set_led_status (led_status: VP.t)
-    : ESPST_Extract unit
-      (requires (set_led_status_pre led_status))
-      (ensures (set_led_status_post led_status)) =
+    : ESPST_Extract unit (requires (set_led_status_pre led_status))
+                         (ensures (set_led_status_post led_status)) =
   extract_st (fun _ -> set_led_status_espst led_status)
 
 
@@ -333,7 +331,6 @@ let app_main_espst (_: unit)
   // in this case). This can be done by running the function given below:
   //
   // gpio_uninstall_isr_service ();
-
 
 
 (**
