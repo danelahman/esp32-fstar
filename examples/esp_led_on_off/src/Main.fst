@@ -279,11 +279,13 @@ let app_main_pre (h0: HS.mem) : GTot Type0 =
 (** 
   * The postcondition of `app_main`, it ensures that:
   * - the function only modifies GPIO-internals and the ghost
-  *   state modelling arguments/resources to ISR handlers.
+  *   state modelling arguments/resources to ISR handlers, and
+  * - that the ISR handler service has been uninstalled.
   *)
 noextract
 let app_main_post (h0: HS.mem) (_: unit) (h1: HS.mem) : GTot Type0 = 
-  modifies_gpio_intls h0 h1
+  modifies_gpio_intls h0 h1 /\
+  ~(isr_installed h1)
 
 (**
   * The main function and entrypoint for ESP32, it:
