@@ -1,6 +1,5 @@
 (**
-  * This module exposes various functions native to GPIO 
-  * libraries. The implementation can be found in c/GPIO.c
+  * Interface to various functions native to GPIO libraries.
   *)
 
 module GPIO

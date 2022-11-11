@@ -3,7 +3,6 @@
   * blinking modes (slower and faster) on an ESP32 board by 
   * installing an interrupt handler that reacts and changes the
   * blinking mode when a button is pushed.
-  *
   *)
 
 module Main
@@ -115,16 +114,16 @@ let set_led_mode_post (led_mode: VP.t) (h0: HS.mem) (_: unit) (h1: HS.mem)
 noextract
 let logand_add_lemma0 (x: U32.t)
     : Lemma (requires (x = 0ul))
-      (ensures (U32.logand (x `U32.add` 1ul) 1ul = 1ul))
-      [SMTPat (U32.logand (x `U32.add` 1ul) 1ul)] =
+            (ensures (U32.logand (x `U32.add` 1ul) 1ul = 1ul))
+            [SMTPat (U32.logand (x `U32.add` 1ul) 1ul)] =
   assert (x `U32.add` 1ul = 1ul);
   assert (U32.logand 1ul 1ul = 1ul)
 
 noextract
 let logand_add_lemma1 (x: U32.t)
     : Lemma (requires (x = 1ul))
-      (ensures (U32.logand (x `U32.add` 1ul) 1ul = 0ul))
-      [SMTPat (U32.logand (x `U32.add` 1ul) 1ul)] =
+            (ensures (U32.logand (x `U32.add` 1ul) 1ul = 0ul))
+            [SMTPat (U32.logand (x `U32.add` 1ul) 1ul)] =
   assert (x `U32.add` 1ul = 2ul);
   assert (U32.logand 2ul 1ul = 0ul)
 
@@ -136,18 +135,16 @@ let logand_add_lemma1 (x: U32.t)
 noextract
 inline_for_extraction
 let set_led_mode_espst (led_mode: VP.t)
-    : ESPST unit
-      (requires (set_led_mode_pre led_mode))
-      (ensures (set_led_mode_post led_mode)) =
+    : ESPST unit (requires (set_led_mode_pre led_mode))
+                 (ensures (set_led_mode_post led_mode)) =
   recall isr_map;
   let led = VPU32.downcast led_mode_rel led_mode in
   recall_p led led_mode_initialised_pred;
   led *= U32.logand (!*led `U32.add` 1ul) 1ul
 
 let set_led_mode (led_status: VP.t)
-    : ESPST_Extract unit
-      (requires (set_led_mode_pre led_status))
-      (ensures (set_led_mode_post led_status)) =
+    : ESPST_Extract unit (requires (set_led_mode_pre led_status))
+                         (ensures (set_led_mode_post led_status)) =
   extract_st (fun _ -> set_led_mode_espst led_status)
 
 (**
