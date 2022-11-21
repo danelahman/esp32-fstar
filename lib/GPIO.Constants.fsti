@@ -32,6 +32,11 @@ val esp_err_esp_err_invalid_arg:esp_err_t
 val esp_err_esp_err_invalid_state:esp_err_t
 val esp_err_esp_err_not_found:esp_err_t
 
+val eq_esp_err_t:(e1:esp_err_t) -> (e2:esp_err_t) ->
+  Pure bool (requires (True)) 
+            (ensures  (fun b -> (b = true <==> e1 = e2) /\ 
+                             (b = false <==> e1 <> e2)))
+
 val gpio_num_t:eqtype
 val gpio_num_0:gpio_num_t
 val gpio_num_5:gpio_num_t

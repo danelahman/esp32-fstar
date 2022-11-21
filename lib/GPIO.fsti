@@ -144,6 +144,9 @@ val gpio_install_isr_service (intr_flags: esp_intr_flag_t)
       (ensures (fun h0 r h1 -> modifies_gpio_intl_bufs h0 h1 /\ 
                             r <> esp_err_esp_err_invalid_state /\
                             r <> esp_err_esp_err_invalid_arg /\
+                            (r = esp_err_esp_ok \/
+                             r = esp_err_esp_err_no_mem \/
+                             r = esp_err_esp_err_not_found) /\
                             (r = esp_err_esp_ok ==> isr_installed h1 /\ 
                                                    isr_empty h1) /\
                             (r <> esp_err_esp_ok ==> isr_unmodified h0 h1)))

@@ -13,6 +13,10 @@ GPIO_Constants_esp_err_t GPIO_Constants_esp_err_esp_invalid_arg = ESP_ERR_INVALI
 GPIO_Constants_esp_err_t GPIO_Constants_esp_err_esp_invalid_state = ESP_ERR_INVALID_STATE;
 GPIO_Constants_esp_err_t GPIO_Constants_esp_err_esp_not_found = ESP_ERR_NOT_FOUND;
 
+bool GPIO_Constants_eq_esp_err_t(GPIO_Constants_esp_err_t e1, GPIO_Constants_esp_err_t e2) {
+  return (e1 == e2);
+}
+
 GPIO_Constants_gpio_mode_t GPIO_Constants_gpio_mode_input = GPIO_MODE_INPUT;
 GPIO_Constants_gpio_mode_t GPIO_Constants_gpio_mode_output = GPIO_MODE_OUTPUT;
 

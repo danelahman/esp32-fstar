@@ -29,6 +29,9 @@ extern GPIO_Constants_esp_err_t GPIO_Constants_esp_err_esp_err_invalid_state;
 
 extern GPIO_Constants_esp_err_t GPIO_Constants_esp_err_esp_err_not_found;
 
+extern bool
+GPIO_Constants_eq_esp_err_t(GPIO_Constants_esp_err_t e1, GPIO_Constants_esp_err_t e2);
+
 extern GPIO_Constants_gpio_num_t GPIO_Constants_gpio_num_0;
 
 extern GPIO_Constants_gpio_num_t GPIO_Constants_gpio_num_5;

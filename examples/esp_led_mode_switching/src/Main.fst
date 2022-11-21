@@ -266,7 +266,7 @@ let app_main_espst (_: unit)
   // isr install
   let r = gpio_install_isr_service esp_intr_flag_lowmed in
 
-  if (r = esp_err_esp_ok) then 
+  if (eq_esp_err_t r esp_err_esp_ok) then 
   begin
   
     let _ =
