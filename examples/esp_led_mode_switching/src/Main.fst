@@ -264,35 +264,41 @@ let app_main_espst (_: unit)
   let _ = gpio_set_direction button_gpio gpio_mode_input in
   
   // isr install
-  let _ = gpio_install_isr_service esp_intr_flag_lowmed in
-  let _ =
-    gpio_isr_handler_add 
-      #set_led_mode_pre
-      #set_led_mode_post
-      button_gpio
-      set_led_mode
-      (VPU32.upcast led_mode_rel led_mode)
-  in
-  let _ = gpio_set_intr_type button_gpio gpio_intr_posedge in
+  let r = gpio_install_isr_service esp_intr_flag_lowmed in
 
-  let led_status = mmalloc #U32.t #led_status_rel HS.root 0ul in
-  witness_p led_status led_status_initialised_pred;
-
-  // while loop
-  VPW.while_true2 
-    #main_task_pre 
-    #main_task_post 
-    main_task 
-    (VPU32.upcast led_mode_rel led_mode) 
-    (VPU32.upcast led_status_rel led_status)
+  if (r = esp_err_esp_ok) then 
+  begin
   
-  // isr uninstall
-  // If we were to remove the infinite while loop, or have a terminating
-  // loop in the code instead, we would also need to uninstall the 
-  // installed ISR handlers so as to release resources (with `pop_frame`
-  // in this case). This can be done by running the function given below:
-  //
-  // gpio_uninstall_isr_service ()
+    let _ =
+      gpio_isr_handler_add 
+        #set_led_mode_pre
+        #set_led_mode_post
+        button_gpio
+        set_led_mode
+        (VPU32.upcast led_mode_rel led_mode)
+    in
+    let _ = gpio_set_intr_type button_gpio gpio_intr_posedge in
+     
+    let led_status = mmalloc #U32.t #led_status_rel HS.root 0ul in
+    witness_p led_status led_status_initialised_pred;
+     
+    // while loop
+    VPW.while_true2 
+      #main_task_pre 
+      #main_task_post 
+      main_task 
+      (VPU32.upcast led_mode_rel led_mode) 
+      (VPU32.upcast led_status_rel led_status)
+     
+    // isr uninstall
+    // If we were to remove the infinite while loop, or have a terminating
+    // loop in the code instead, we would also need to uninstall the 
+    // installed ISR handlers so as to release resources (with `pop_frame`
+    // in this case). This can be done by running the function given below:
+    //
+    // gpio_uninstall_isr_service ()
+
+  end
 
 
 (**

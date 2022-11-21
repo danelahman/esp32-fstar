@@ -310,28 +310,33 @@ let app_main_espst (_: unit)
   let _ = gpio_set_direction button_gpio gpio_mode_input in
   
   // isr install
-  let _ = gpio_install_isr_service esp_intr_flag_lowmed in
-  let _ =
-    gpio_isr_handler_add 
-      #set_led_status_pre
-      #set_led_status_post
-      button_gpio
-      set_led_status
-      (VPU32.upcast led_status_rel led_status)
-  in
-  let _ = gpio_set_intr_type button_gpio gpio_intr_posedge in
-
-  // while loop
-  VPW.while_true #main_task_pre #main_task_post main_task (VPU32.upcast led_status_rel led_status)
+  let r = gpio_install_isr_service esp_intr_flag_lowmed in
   
-  // isr uninstall
-  // If we were to remove the infinite while loop, or have a terminating
-  // loop in the code instead, we would also need to uninstall the 
-  // installed ISR handlers so as to release resources (with `pop_frame`
-  // in this case). This can be done by running the function given below:
-  //
-  // gpio_uninstall_isr_service ();
-
+  if (r = esp_err_esp_ok) then 
+  begin
+  
+    let _ =
+      gpio_isr_handler_add 
+        #set_led_status_pre
+        #set_led_status_post
+        button_gpio
+        set_led_status
+        (VPU32.upcast led_status_rel led_status)
+    in
+    let _ = gpio_set_intr_type button_gpio gpio_intr_posedge in
+     
+    // while loop
+    VPW.while_true #main_task_pre #main_task_post main_task (VPU32.upcast led_status_rel led_status)
+     
+    // isr uninstall
+    // If we were to remove the infinite while loop, or have a terminating
+    // loop in the code instead, we would also need to uninstall the 
+    // installed ISR handlers so as to release resources (with `pop_frame`
+    // in this case). This can be done by running the function given below:
+    //
+    // gpio_uninstall_isr_service ();
+    
+  end
 
 (**
   * Top-level main function that will get extracted to C.
