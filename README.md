@@ -98,11 +98,11 @@ Each example application has the following general directory structure:
 
 * `Makefile.include`: makefile including the paths used by F\* Emacs mode
 
-## Typechecking, extracting, and compiling the examples
+## Typechecking, extracting, compiling, and flashing the examples
 
 In the root folder of the each example (`examples/foo`), you can type
 
-* `make extract` to typecheck the example in F* and extract it to C
+* `make extract` to typecheck the example in F\* and extract it to C
 * `make compile` to compile the extracted C code into ESP32 binary
 * `make flash` to flash the compiled code onto an ESP32 SoC
 * `make` to do all the above
