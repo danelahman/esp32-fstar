@@ -51,14 +51,17 @@ void Main_app_main()
   x6 = GPIO_gpio_set_direction(Main_button_gpio, GPIO_Constants_gpio_mode_input);
   GPIO_Constants_esp_err_t
   x7 = GPIO_gpio_install_isr_service(GPIO_Constants_esp_intr_flag_lowmed);
-  Monotonic_VoidPointer_t x8 = Monotonic_VoidPointer_UInt32_upcast(x1);
-  GPIO_Constants_esp_err_t
-  x80 = GPIO_gpio_isr_handler_add(Main_button_gpio, Main_set_led_mode, x8);
-  GPIO_Constants_esp_err_t
-  x9 = GPIO_gpio_set_intr_type(Main_button_gpio, GPIO_Constants_gpio_intr_posedge);
-  uint32_t *x10 = KRML_HOST_CALLOC((uint32_t)1U, sizeof (uint32_t));
-  Monotonic_VoidPointer_t x12 = Monotonic_VoidPointer_UInt32_upcast(x1);
-  Monotonic_VoidPointer_t x13 = Monotonic_VoidPointer_UInt32_upcast(x10);
-  Monotonic_VoidPointer_While_while_true2(Main_main_task, x12, x13);
+  if (GPIO_Constants_eq_esp_err_t(x7, GPIO_Constants_esp_err_esp_ok))
+  {
+    Monotonic_VoidPointer_t x8 = Monotonic_VoidPointer_UInt32_upcast(x1);
+    GPIO_Constants_esp_err_t
+    x80 = GPIO_gpio_isr_handler_add(Main_button_gpio, Main_set_led_mode, x8);
+    GPIO_Constants_esp_err_t
+    x9 = GPIO_gpio_set_intr_type(Main_button_gpio, GPIO_Constants_gpio_intr_posedge);
+    uint32_t *x10 = KRML_HOST_CALLOC((uint32_t)1U, sizeof (uint32_t));
+    Monotonic_VoidPointer_t x12 = Monotonic_VoidPointer_UInt32_upcast(x1);
+    Monotonic_VoidPointer_t x13 = Monotonic_VoidPointer_UInt32_upcast(x10);
+    Monotonic_VoidPointer_While_while_true2(Main_main_task, x12, x13);
+  }
 }
 
