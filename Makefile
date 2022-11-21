@@ -1,8 +1,8 @@
 EXAMPLES_DIR = examples
 
-.PHONY: all
+.PHONY: examples
 
-all: $(EXAMPLES_DIR)/*
+examples: $(EXAMPLES_DIR)/*
 	for file in $^ ; do \
                 cd $${file} && \
 		make extract && \
