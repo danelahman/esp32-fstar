@@ -75,11 +75,13 @@ let modifies_gpio_intls_plus (h0 h1: HS.mem) (l:B.loc) : GTot Type0 =
   *)
 val gpio_set_level (gpio_num: gpio_num_t) (level: U32.t)
     : ESPST esp_err_t
-      (requires (fun h0 -> B.live h0 gpio_intl_bufs /\ 
-                        gpio_num_is_output gpio_num))
-      (ensures (fun h0 r h1 -> modifies_gpio_intl_bufs h0 h1 /\ 
-                            r == esp_err_esp_ok /\
-                            isr_unmodified h0 h1))
+      (requires (fun h0 -> 
+        B.live h0 gpio_intl_bufs /\ 
+        gpio_num_is_output gpio_num))
+      (ensures (fun h0 r h1 -> 
+        modifies_gpio_intl_bufs h0 h1 /\ 
+        r == esp_err_esp_ok /\
+        isr_unmodified h0 h1))
 
 (** 
   * Configure IO Pad as General Purpose IO. 
@@ -92,10 +94,12 @@ val gpio_set_level (gpio_num: gpio_num_t) (level: U32.t)
   *)
 val gpio_pad_select_gpio (gpio_num: gpio_num_t)
     : ESPST esp_err_t
-      (requires (fun h0 -> B.live h0 gpio_intl_bufs))
-      (ensures (fun h0 r h1 -> modifies_gpio_intl_bufs h0 h1 /\ 
-                            r == esp_err_esp_ok /\
-                            isr_unmodified h0 h1))
+      (requires (fun h0 -> 
+        B.live h0 gpio_intl_bufs))
+      (ensures (fun h0 r h1 -> 
+        modifies_gpio_intl_bufs h0 h1 /\ 
+        r == esp_err_esp_ok /\
+        isr_unmodified h0 h1))
 
 (** 
   * Configure GPIO direction, such as output_only, input_only, 
@@ -113,11 +117,13 @@ val gpio_pad_select_gpio (gpio_num: gpio_num_t)
   *)
 val gpio_set_direction (gpio_num: gpio_num_t) (mode: gpio_mode_t)
     : ESPST esp_err_t
-      (requires (fun h0 -> B.live h0 gpio_intl_bufs /\
-                        gpio_num_mode_compat gpio_num mode))
-      (ensures (fun h0 r h1 -> modifies_gpio_intl_bufs h0 h1 /\ 
-                            r == esp_err_esp_ok /\
-                            isr_unmodified h0 h1))
+      (requires (fun h0 -> 
+        B.live h0 gpio_intl_bufs /\
+        gpio_num_mode_compat gpio_num mode))
+      (ensures (fun h0 r h1 -> 
+        modifies_gpio_intl_bufs h0 h1 /\ 
+        r == esp_err_esp_ok /\
+        isr_unmodified h0 h1))
 
 (** 
   * Install the GPIO driver’s ETS_GPIO_INTR_SOURCE ISR handler 
@@ -139,17 +145,19 @@ val gpio_set_direction (gpio_num: gpio_num_t) (mode: gpio_mode_t)
   *)
 val gpio_install_isr_service (intr_flags: esp_intr_flag_t)
     : ESPST esp_err_t
-      (requires (fun h0 -> B.live h0 gpio_intl_bufs /\ 
-                        ~(isr_installed h0)))
-      (ensures (fun h0 r h1 -> modifies_gpio_intl_bufs h0 h1 /\ 
-                            r <> esp_err_esp_err_invalid_state /\
-                            r <> esp_err_esp_err_invalid_arg /\
-                            (r = esp_err_esp_ok \/
-                             r = esp_err_esp_err_no_mem \/
-                             r = esp_err_esp_err_not_found) /\
-                            (r = esp_err_esp_ok ==> isr_installed h1 /\ 
-                                                   isr_empty h1) /\
-                            (r <> esp_err_esp_ok ==> isr_unmodified h0 h1)))
+      (requires (fun h0 -> 
+        B.live h0 gpio_intl_bufs /\ 
+        ~(isr_installed h0)))
+      (ensures (fun h0 r h1 -> 
+        modifies_gpio_intl_bufs h0 h1 /\ 
+        r <> esp_err_esp_err_invalid_state /\
+        r <> esp_err_esp_err_invalid_arg /\
+        (r = esp_err_esp_ok \/
+         r = esp_err_esp_err_no_mem \/
+         r = esp_err_esp_err_not_found) /\
+        (r = esp_err_esp_ok ==> isr_installed h1 /\ 
+                               isr_empty h1) /\
+        (r <> esp_err_esp_ok ==> isr_unmodified h0 h1)))
 
 (** 
   * Uninstall the driver’s GPIO ISR service, freeing related 
@@ -163,10 +171,12 @@ val gpio_install_isr_service (intr_flags: esp_intr_flag_t)
   *)
 val gpio_uninstall_isr_service (_: unit)
     : ESPST unit
-      (requires (fun h0 -> B.live h0 gpio_intl_bufs /\ 
-                        isr_installed h0))
-      (ensures (fun h0 r h1 -> modifies_gpio_intls h0 h1 /\ 
-                            ~(isr_installed h1)))
+      (requires (fun h0 -> 
+        B.live h0 gpio_intl_bufs /\ 
+        isr_installed h0))
+      (ensures (fun h0 r h1 -> 
+        modifies_gpio_intls h0 h1 /\ 
+        ~(isr_installed h1)))
 
 (** 
   * GPIO set interrupt trigger type. 
@@ -183,11 +193,13 @@ val gpio_uninstall_isr_service (_: unit)
   *)
 val gpio_set_intr_type (gpio_num: gpio_num_t) (intr_type: esp_intr_type_t)
     : ESPST esp_err_t
-      (requires (fun h0 -> B.live h0 gpio_intl_bufs /\ 
-                        isr_contains h0 gpio_num))
-      (ensures (fun h0 r h1 -> modifies_gpio_intl_bufs h0 h1 /\ 
-                            r == esp_err_esp_ok /\
-                            isr_unmodified h0 h1))
+      (requires (fun h0 -> 
+        B.live h0 gpio_intl_bufs /\ 
+        isr_contains h0 gpio_num))
+      (ensures (fun h0 r h1 -> 
+        modifies_gpio_intl_bufs h0 h1 /\ 
+        r == esp_err_esp_ok /\
+        isr_unmodified h0 h1))
 
 (**
   * Function for installing ISR handlers. 

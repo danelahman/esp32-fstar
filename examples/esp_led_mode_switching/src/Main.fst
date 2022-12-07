@@ -270,7 +270,7 @@ let app_main_espst (_: unit)
   begin
   
     let _ =
-      gpio_isr_handler_add 
+      gpio_isr_handler_add
         #set_led_mode_pre
         #set_led_mode_post
         button_gpio

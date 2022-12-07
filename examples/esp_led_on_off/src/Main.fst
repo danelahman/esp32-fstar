@@ -316,7 +316,7 @@ let app_main_espst (_: unit)
   begin
   
     let _ =
-      gpio_isr_handler_add 
+      gpio_isr_handler_add
         #set_led_status_pre
         #set_led_status_post
         button_gpio

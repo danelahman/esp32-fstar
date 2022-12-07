@@ -84,18 +84,14 @@ let isr_disjoint_from #a #rrel #rel (p: B.mpointer a rrel rel) : GTot Type0 =
   B.loc_disjoint (B.loc_addr_of_buffer p) (B.loc_mreference isr_map)
 
 noextract
-let isr_disjoint_from_resources #a #rrel #rel (h: HS.mem) (p: B.mpointer a rrel rel) : GTot Type0 =
+let isr_disjoint_from_resources #a #rrel #rel 
+  (h: HS.mem) (p: B.mpointer a rrel rel) 
+  : GTot Type0 =
   h `HS.contains` isr_map /\
   (Some? (HS.sel h isr_map) ==>
    (let m = Some?.v (HS.sel h isr_map) in
-     forall n. m `M.contains` n ==> B.loc_disjoint (B.loc_addr_of_buffer p) (VP.loc_voidpointer (M.sel m n))))
-
-(*
-let isr_not_modified (h0 h1: HS.mem) : GTot Type0 =
-  (forall n . h0 `isr_contains` n /\ h1 `isr_contains` n /\ isr_sel h0 n == isr_sel h1 n ==> 
-    (let p = isr_sel h1 n in
-     forall a (rel:B.srel a). p `VP.is_upcast_of` rel ==> B.get h0 (VP.g_downcast rel p) 0 == B.get h1 (VP.g_downcast rel p) 0))
-*)
+     forall n. m `M.contains` n ==> 
+      B.loc_disjoint (B.loc_addr_of_buffer p) (VP.loc_voidpointer (M.sel m n))))
 
 (**
   * An effect for programming ESP computations. As part of its precondition, 
@@ -190,16 +186,26 @@ let lift_div_espst (a:Type) (wp:pure_wp a) (c:eqtype_as_type unit -> DIV a wp)
 
 sub_effect DIV ~> ESPSTATE = lift_div_espst
 
+(**
+  * A pre- and postcondition style variant of this effect. 
+  *)
 effect ESPST (a:Type) (pre:st_pre) (post:(h0: HS.mem -> Tot (st_post a))) =
-  ESPSTATE a (fun p h0 -> pre h0 /\ isr_live_in h0 /\ (forall x h1 . pre h0 /\ post h0 x h1 /\ equal_stack_domains h0 h1 /\ isr_live_in h1 ==> p x h1))
+  ESPSTATE a (fun p h0 -> 
+               pre h0 /\ isr_live_in h0 /\ 
+               (forall x h1 . pre h0 /\ post h0 x h1 /\ equal_stack_domains h0 h1 /\ isr_live_in h1 ==> p x h1))
 
 
 (**
-  * Reification and extraction of the ESPST effect.
+  * Monadic reification of code in the abstract ESPST effect
+  * into code in the ST effect that can be extracted to C.
   *)
 effect ESPST_Extract (a:Type) (pre:st_pre) (post:(h0: HS.mem -> Tot (st_post a))) =
-  ST a (requires (fun h0 -> pre h0 /\ isr_live_in h0)) 
-       (ensures  (fun h0 x h1 -> post h0 x h1 /\ isr_live_in h1))
+  ST a (requires (fun h0 -> 
+         pre h0 /\ 
+         isr_live_in h0)) 
+       (ensures  (fun h0 x h1 -> 
+         post h0 x h1 /\ 
+         isr_live_in h1))
 
 inline_for_extraction
 let extract_st #a #pre #post ($c:unit -> ESPST a pre post)
@@ -226,40 +232,51 @@ let unextract_st #a #pre #post ($c:unit -> ESPST_Extract a pre post)
 (**
   * Pushing and popping frames on and off the stack.
   *)
-effect ESPST_Unsafe (a:Type) (pre:st_pre) (post:(h0: HS.mem -> Tot (st_post a))) =
-  ESPSTATE a (fun p h0 -> pre h0 /\ isr_live_in h0 /\ (forall x h1 . pre h0 /\ post h0 x h1 /\ isr_live_in h1 ==> p x h1))
+effect ESPST_PushPop (a:Type) (pre:st_pre) (post:(h0: HS.mem -> Tot (st_post a))) =
+  ESPSTATE a (fun p h0 -> 
+               pre h0 /\ isr_live_in h0 /\ 
+               (forall x h1 . post h0 x h1 /\ isr_live_in h1 ==> p x h1))
 
 noextract
 inline_for_extraction
 let push_frame () 
-  : ESPST_Unsafe unit (requires (fun _ -> True)) 
-                      (ensures  (fun h0 _ h1 -> HS.fresh_frame h0 h1 /\ isr_unmodified h0 h1)) =
+  : ESPST_PushPop unit (requires (fun _ -> True)) 
+                       (ensures  (fun h0 _ h1 -> 
+                         HS.fresh_frame h0 h1 /\ 
+                         isr_unmodified h0 h1)) =
   ESPSTATE?.reflect (fun _ -> push_frame ())
 
 noextract
 inline_for_extraction
 let pop_frame ()
-  : ESPST_Unsafe unit (requires (fun h0 -> HS.poppable h0 /\
-                                        (isr_live_in (HS.pop h0))))
-                      (ensures  (fun h0 _ h1 -> HS.poppable h0 /\ h1 == HS.pop h0 /\ HS.popped h0 h1 /\ isr_unmodified h0 h1)) =
+  : ESPST_PushPop unit (requires (fun h0 -> 
+                         HS.poppable h0 /\
+                         isr_live_in (HS.pop h0)))
+                       (ensures  (fun h0 _ h1 -> 
+                         HS.poppable h0 /\ 
+                         h1 == HS.pop h0 /\ 
+                         HS.popped h0 h1 /\ 
+                         isr_unmodified h0 h1)) =
   ESPSTATE?.reflect (fun _ -> pop_frame ())
 
 (**
   * Allocate a pointer on the stack.
   *)
-effect ESPST_Inline (a:Type) (pre:st_pre) (post:(h0: HS.mem -> Tot (st_post a))) =
+effect ESPST_StackAlloc (a:Type) (pre:st_pre) (post:(h0: HS.mem -> Tot (st_post a))) =
   ESPSTATE a (fun p h0 -> 
-               pre h0 /\ HS.is_stack_region (HS.get_tip h0) /\ isr_live_in h0 /\ 
-               (forall x h1 . pre h0 /\ post h0 x h1 /\ inline_stack_inv h0 h1 /\ isr_live_in h1 ==> p x h1))
-   
+               pre h0 /\ HS.is_stack_region (HS.get_tip h0) /\ 
+               (forall x h1 . post h0 x h1 /\ inline_stack_inv h0 h1 ==> p x h1))
+
 noextract
 inline_for_extraction
 let malloca (#a:Type0) (#rrel:B.srel a)
   (init:a) (len:U32.t)
-  : ESPST_Inline (B.mpointer a rrel rrel)
-          (requires (fun _ -> B.alloca_pre 1ul))
-          (ensures  (fun h0 b h1 -> B.alloc_post_mem_common b h0 h1 (Seq.create 1 init) /\
-		                 B.frameOf b == HS.get_tip h0)) =
+  : ESPST_StackAlloc (B.mpointer a rrel rrel)
+          (requires (fun _ -> 
+            B.alloca_pre 1ul))
+          (ensures  (fun h0 b h1 -> 
+            B.alloc_post_mem_common b h0 h1 (Seq.create 1 init) /\
+	    B.frameOf b == HS.get_tip h0)) =
   ESPSTATE?.reflect (fun _ -> recall isr_map;
                            B.malloca #a #rrel init 1ul)
 
@@ -271,8 +288,10 @@ inline_for_extraction
 let mmalloc (#a:Type0) (#rrel:B.srel a)
   (r:HS.rid) (init:a)
   : ESPST (b:B.mpointer a rrel rrel{B.frameOf b == r /\ B.freeable b})
-          (requires (fun _ -> B.malloc_pre r 1ul))
-          (ensures  (fun h0 b h1 -> B.alloc_post_mem_common b h0 h1 (Seq.create 1 init))) =
+          (requires (fun _ -> 
+            B.malloc_pre r 1ul))
+          (ensures  (fun h0 b h1 -> 
+            B.alloc_post_mem_common b h0 h1 (Seq.create 1 init))) =
   ESPSTATE?.reflect (fun _ -> recall isr_map;
                            B.mmalloc #a #rrel r init 1ul)
 
@@ -280,7 +299,9 @@ let mmalloc (#a:Type0) (#rrel:B.srel a)
 (**
   * Freeing a heap-allocated pointer.
   *)
-let lemma_free_preserves_isr_inv (#a:Type0) (#rrel #rel:B.srel a) (b:B.mpointer a rrel rel) (h0 h1:HS.mem)
+let lemma_free_preserves_isr_inv 
+  (#a:Type0) (#rrel #rel:B.srel a) 
+  (b:B.mpointer a rrel rel) (h0 h1:HS.mem)
   : Lemma (requires (
             B.live h0 b /\
             B.freeable b /\ 
@@ -302,15 +323,17 @@ let lemma_free_preserves_isr_inv (#a:Type0) (#rrel #rel:B.srel a) (b:B.mpointer 
 noextract
 inline_for_extraction
 let free (#a:Type0) (#rrel #rel:B.srel a) (b:B.mpointer a rrel rel)
-  : ESPST unit (requires (fun h0 -> B.live h0 b /\ 
-                                 B.freeable b /\ 
-                                 isr_disjoint_from b /\
-                                 isr_disjoint_from_resources h0 b))
-               (ensures  (fun h0 _ h1 -> (not (B.g_is_null b)) /\
-                                      Map.domain (HS.get_hmap h1) `Set.equal` Map.domain (HS.get_hmap h0) /\
-                                      (HS.get_tip h1) == (HS.get_tip h0) /\
-                                      B.modifies (B.loc_addr_of_buffer b) h0 h1 /\
-                                      HS.live_region h1 (B.frameOf b))) = 
+  : ESPST unit (requires (fun h0 -> 
+                 B.live h0 b /\ 
+                 B.freeable b /\ 
+                 isr_disjoint_from b /\
+                 isr_disjoint_from_resources h0 b))
+               (ensures  (fun h0 _ h1 -> 
+                 not (B.g_is_null b) /\
+                 Map.domain (HS.get_hmap h1) `Set.equal` Map.domain (HS.get_hmap h0) /\
+                 HS.get_tip h1 == HS.get_tip h0 /\
+                 B.modifies (B.loc_addr_of_buffer b) h0 h1 /\
+                 HS.live_region h1 (B.frameOf b))) = 
   ESPSTATE?.reflect (fun _ -> B.free b)
 
 
@@ -320,8 +343,12 @@ let free (#a:Type0) (#rrel #rel:B.srel a) (b:B.mpointer a rrel rel)
 noextract
 inline_for_extraction
 let ( !* ) (#a:Type0) (#rrel #rel:B.srel a) (p:B.mpointer a rrel rel):
-  ESPST a (requires (fun h -> B.live h p))
-          (ensures  (fun h0 x h1 -> B.live h1 p /\ x == B.get h0 p 0 /\ h1 == h0)) =
+  ESPST a (requires (fun h -> 
+            B.live h p))
+          (ensures  (fun h0 x h1 -> 
+            B.live h1 p /\ 
+            x == B.get h0 p 0 /\ 
+            h1 == h0)) =
   ESPSTATE?.reflect (fun _ -> !* p)
 
 (**
@@ -347,7 +374,9 @@ noextract
 inline_for_extraction
 let get ()
   : ESPST (erased HS.mem) (requires (fun _ -> True))
-                          (ensures  (fun h0 x h1 -> h0 == reveal x /\ h1 == h0)) =
+                          (ensures  (fun h0 x h1 -> 
+                            h0 == reveal x /\ 
+                            h1 == h0)) =
   ESPSTATE?.reflect (fun _ -> let h = get () in hide h)
 
 (**
@@ -356,8 +385,11 @@ let get ()
 noextract
 inline_for_extraction
 let recall (#a:Type) (#rel:FStar.Preorder.preorder a) (r:mreference a rel{not (HS.is_mm r)})
-  : ESPST unit (requires (fun m -> is_eternal_region (HS.frameOf r)))
-               (ensures  (fun m0 _ m1 -> m0 == m1 /\ m1 `HS.contains` r)) =
+  : ESPST unit (requires (fun m -> 
+                 is_eternal_region (HS.frameOf r)))
+               (ensures  (fun m0 _ m1 -> 
+                 m0 == m1 /\ 
+                 m1 `HS.contains` r)) =
   ESPSTATE?.reflect (fun _ -> recall r)
 
 (**
@@ -366,8 +398,12 @@ let recall (#a:Type) (#rel:FStar.Preorder.preorder a) (r:mreference a rel{not (H
 noextract
 inline_for_extraction
 let witness_p (#a:Type0) (#rrel #rel:B.srel a) (b:B.mbuffer a rrel rel) (p:B.spred a)
-  : ESPST unit (requires (fun h0 -> p (B.as_seq h0 b) /\ p `B.stable_on` rel))
-               (ensures  (fun h0 _ h1 -> h0 == h1 /\ b `B.witnessed` p)) =
+  : ESPST unit (requires (fun h0 -> 
+                 p (B.as_seq h0 b) /\ 
+                 p `B.stable_on` rel))
+               (ensures  (fun h0 _ h1 -> 
+                 h0 == h1 /\ 
+                 b `B.witnessed` p)) =
   ESPSTATE?.reflect (fun _ -> B.witness_p b p)
 
 (**
@@ -376,6 +412,10 @@ let witness_p (#a:Type0) (#rrel #rel:B.srel a) (b:B.mbuffer a rrel rel) (p:B.spr
 noextract
 inline_for_extraction
 let recall_p (#a:Type0) (#rrel #rel:B.srel a) (b:B.mbuffer a rrel rel) (p:B.spred a)
-  : ESPST unit (requires (fun h0 -> (B.recallable b \/ B.live h0 b) /\ b `B.witnessed` p))
-               (ensures  (fun h0 _ h1 -> h0 == h1 /\ B.live h0 b /\ p (B.as_seq h0 b))) =
+  : ESPST unit (requires (fun h0 -> 
+                 (B.recallable b \/ B.live h0 b) /\ 
+                 b `B.witnessed` p))
+               (ensures  (fun h0 _ h1 -> 
+                 h0 == h1 /\ B.live h0 b /\
+                 p (B.as_seq h0 b))) =
   ESPSTATE?.reflect (fun _ -> B.recall_p b p)
