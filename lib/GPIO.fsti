@@ -247,6 +247,6 @@ val gpio_isr_handler_add
           (forall h0 h1. reveal pre args h0 /\ reveal post args h0 () h1 ==> reveal pre args h1)))
       (ensures                          // interrupt handler has to satisfy a loop invariant
         (fun h0 r h1 -> 
-          modifies_gpio_intls_plus h0 h1 (VP.loc_voidpointer args) /\ // at most GPIO internals and argument void pointer are modified
-          r == esp_err_esp_ok /\                                      // no errors occur
-          isr_updated_with h0 h1 gpio_num args))                     // ghost state is updated by mapping `gpio_num` to the argument void pointer
+          modifies_gpio_intls h0 h1 /\             // at most GPIO internals are modified
+          r == esp_err_esp_ok /\                   // no errors occur
+          isr_updated_with h0 h1 gpio_num args))  // ghost state is updated by mapping `gpio_num` to the argument void pointer

@@ -298,7 +298,7 @@ inline_for_extraction
 let app_main_espst (_: unit) 
     : ESPST unit (requires app_main_pre) (ensures app_main_post) =
   recall isr_map;
-  
+
   // led status setup
   let led_status = mmalloc #U32.t #led_status_rel HS.root 0ul in
   witness_p led_status led_status_initialised_pred;
@@ -323,10 +323,15 @@ let app_main_espst (_: unit)
         set_led_status
         (VPU32.upcast led_status_rel led_status)
     in
+
     let _ = gpio_set_intr_type button_gpio gpio_intr_posedge in
-     
+
     // while loop
-    VPW.while_true #main_task_pre #main_task_post main_task (VPU32.upcast led_status_rel led_status)
+    VPW.while_true 
+      #main_task_pre 
+      #main_task_post 
+      main_task 
+      (VPU32.upcast led_status_rel led_status)
      
     // isr uninstall
     // If we were to remove the infinite while loop, or have a terminating
@@ -334,7 +339,7 @@ let app_main_espst (_: unit)
     // installed ISR handlers so as to release resources (with `pop_frame`
     // in this case). This can be done by running the function given below:
     //
-    // gpio_uninstall_isr_service ();
+    // gpio_uninstall_isr_service ()
     
   end
 

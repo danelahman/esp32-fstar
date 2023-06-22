@@ -247,6 +247,7 @@ let app_main_post (h0: HS.mem) (_: unit) (h1: HS.mem) : GTot Type0 =
   * - in an infinite loop it polls for any button pushes so
   *   as to change the blinking mode of the LED.
   *)
+#push-options "--z3rlimit 10"      // needed for gpio_uninstall_isr_service variant of app_main_espst
 noextract
 inline_for_extraction
 let app_main_espst (_: unit) 
@@ -278,10 +279,10 @@ let app_main_espst (_: unit)
         (VPU32.upcast led_mode_rel led_mode)
     in
     let _ = gpio_set_intr_type button_gpio gpio_intr_posedge in
-     
+
     let led_status = mmalloc #U32.t #led_status_rel HS.root 0ul in
     witness_p led_status led_status_initialised_pred;
-     
+
     // while loop
     VPW.while_true2 
       #main_task_pre 
@@ -299,7 +300,6 @@ let app_main_espst (_: unit)
     // gpio_uninstall_isr_service ()
 
   end
-
 
 (**
   * Top-level main function that will get extracted to C.
